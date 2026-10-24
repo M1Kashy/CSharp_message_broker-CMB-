@@ -6,15 +6,16 @@ using Services;
 namespace broker.Controllers;
 
 [Route("In")]
-internal class InController(MessageService messageService) : Controller
+public class InController(MessageService messageService, ILogger<InController> logger) : Controller
 {
    
     [HttpPost]
-    public async Task<IActionResult> PostMsg(Message msg)
+    public async Task<IActionResult> PostMsg([FromBody]Message msg)
     {
+        logger.LogInformation($" \t Get msg: {msg.id} - {msg.msg}");
         var isOk = await messageService.Add(msg);
         if (isOk)
-            return Ok();
+            return Accepted();
         return BadRequest();
     }
 }

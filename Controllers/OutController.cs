@@ -6,7 +6,7 @@ using Services;
 namespace broker.Controllers;
 
 [Route("Out")]
-internal class OutController(MessageService messageService) : Controller
+public class OutController(MessageService messageService) : Controller
 {
    
     [HttpGet("{id:Guid}")]

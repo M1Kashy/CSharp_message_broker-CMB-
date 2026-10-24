@@ -4,13 +4,13 @@ using Models;
 
 namespace Services;
 
-internal class MessageService
+public class MessageService
 {
     ConcurrentDictionary<Guid, ConcurrentQueue<string>>  Queues = new();
 
     ILogger<MessageService> logger {get; set;}
     IConfiguration config {get; set;}
-    MessageService(
+    public MessageService(
         ILogger<MessageService> logger,
         IConfiguration config
     )
@@ -19,14 +19,14 @@ internal class MessageService
         this.config = config;
         initialization();
     }
-    
+
     Task initialization()
     {
-        var queues = config.GetSection("Queue")
+        var queues = config.GetSection("Queues")
                             .GetChildren()
                             .Select(qs => new Guid(qs.Value!))
                             .ToList();
-
+        Console.WriteLine($"\t {queues}");
         if (queues is null || queues.Count == 0)
             throw new Exception("Queue is empty!");
 
@@ -44,7 +44,7 @@ internal class MessageService
         return Task.CompletedTask;
     }
 
-    internal async Task<string?> Get(Guid guid)
+    public async Task<string?> Get(Guid guid)
     {
         var isOk = this.Queues.TryGetValue(guid, out var msgs);
 
@@ -59,7 +59,7 @@ internal class MessageService
         return result!;
     }
 
-    internal async Task<bool> Add(Message message)
+    public async Task<bool> Add(Message message)
     {
          var isOk = this.Queues.TryGetValue(message.id, out var msgs);
 
